@@ -49,9 +49,9 @@ public class FhirDocumentApp implements CommandLineRunner {
 	}
 
 
-    FhirContext ctxFHIR = FhirContext.forDstu3();
+    FhirContext ctxSTU3 = FhirContext.forDstu3();
 
-    IGenericClient client = null;
+
 
     public static final String SNOMEDCT = "http://snomed.info/sct";
 
@@ -62,7 +62,9 @@ public class FhirDocumentApp implements CommandLineRunner {
 
     private FhirBundleUtil fhirBundleUtil;
 
-    private String consultationId = "351";
+    private String consultationId = "2708220";
+
+    CDRInterface cdrInterface = new CDRInterface();
 
     @Override
 	public void run(String... args) throws Exception {
@@ -72,13 +74,13 @@ public class FhirDocumentApp implements CommandLineRunner {
         }
 
 
-        client = ctxFHIR.newRestfulGenericClient("https://data.developer.nhs.uk/ccri-fhir/STU3/");
 
-        client.setEncoding(EncodingEnum.XML);
 
-        Bundle encounterBundle = buildEncounterDocument(client, new IdType().setValue(consultationId));
+
+        Bundle encounterBundle = buildEncounterDocument(new IdType().setValue(consultationId));
+
         Date date = new Date();
-        String xmlResult = ctxFHIR.newXmlParser().setPrettyPrint(true).encodeResourceToString(encounterBundle);
+        String xmlResult = ctxSTU3.newXmlParser().setPrettyPrint(true).encodeResourceToString(encounterBundle);
 
         Files.write(Paths.get(df.format(date)+"+encounter-"+consultationId+"-document.xml"),xmlResult.getBytes());
         performTransform(xmlResult,df.format(date)+"+"+consultationId+".html","XML/DocumentToHTML.xslt");
@@ -87,7 +89,7 @@ public class FhirDocumentApp implements CommandLineRunner {
     }
 
 
-    public Bundle buildEncounterDocument(IGenericClient client, IdType encounterId) throws Exception {
+    public Bundle buildEncounterDocument( IdType encounterId) throws Exception {
 
         FhirDocUtil fhirDoc = new FhirDocUtil(templateEngine);
 
@@ -104,7 +106,7 @@ public class FhirDocumentApp implements CommandLineRunner {
         composition.setDate(new Date());
         composition.setStatus(Composition.CompositionStatus.FINAL);
 
-        Organization leedsTH = getOrganization(client,"RR8");
+        Organization leedsTH = cdrInterface.getOrganization("RR8");
         compositionBundle.addEntry().setResource(leedsTH);
 
         composition.addAttester()
@@ -132,7 +134,7 @@ public class FhirDocumentApp implements CommandLineRunner {
         fhirBundleUtil.processReferences();
 
 
-        Bundle encounterBundle = getEncounterBundleRev(client, encounterId.getIdPart());
+        Bundle encounterBundle = cdrInterface.getEncounterBundleRev(encounterId.getIdPart());
         Encounter encounter = null;
         for(Bundle.BundleEntryComponent entry : encounterBundle.getEntry()) {
             Resource resource =  entry.getResource();
@@ -149,7 +151,7 @@ public class FhirDocumentApp implements CommandLineRunner {
 
 
             // This is a synthea patient
-            Bundle patientBundle = getPatientBundle(client, patientId);
+            Bundle patientBundle = cdrInterface.getPatientBundle(patientId);
 
             fhirBundleUtil.processBundleResources(patientBundle);
 
@@ -193,102 +195,6 @@ public class FhirDocumentApp implements CommandLineRunner {
 
 
 
-    private Bundle getPatientBundle(IGenericClient client, String patientId) {
-
-
-        Bundle patientBundle = client
-                .search()
-                .forResource(Patient.class)
-                .where(Patient.RES_ID.exactly().code(patientId))
-                .include(Patient.INCLUDE_GENERAL_PRACTITIONER)
-                .include(Patient.INCLUDE_ORGANIZATION)
-                .returnBundle(Bundle.class)
-                .execute();
-
-        return patientBundle;
-    }
-
-
-    private Bundle getEncounterBundleRev(IGenericClient client, String encounterId) {
-
-        Bundle bundle = client
-                .search()
-                .forResource(Encounter.class)
-                .where(Patient.RES_ID.exactly().code(encounterId))
-                .revInclude(new Include("*"))
-                .include(new Include("*"))
-                .count(100) // be careful of this TODO
-                .returnBundle(Bundle.class)
-                .execute();
-        return bundle;
-    }
-    private Bundle getConditionBundle(String patientId) {
-
-        return client
-                .search()
-                .forResource(Condition.class)
-                .where(Condition.PATIENT.hasId(patientId))
-                .and(Condition.CLINICAL_STATUS.exactly().code("active"))
-                .returnBundle(Bundle.class)
-                .execute();
-    }
-    private Bundle getEncounterBundle(String patientId) {
-
-        return client
-                .search()
-                .forResource(Encounter.class)
-                .where(Encounter.PATIENT.hasId(patientId))
-                .count(3) // Last 3 entries same as GP Connect
-                .returnBundle(Bundle.class)
-                .execute();
-    }
-
-    private Organization getOrganization(IGenericClient client,String sdsCode) {
-        Organization organization = null;
-        Bundle bundle =  client
-                .search()
-                .forResource(Organization.class)
-                .where(Organization.IDENTIFIER.exactly().code(sdsCode))
-
-                .returnBundle(Bundle.class)
-                .execute();
-        if (bundle.getEntry().size()>0) {
-            if (bundle.getEntry().get(0).getResource() instanceof Organization)
-            organization = (Organization) bundle.getEntry().get(0).getResource();
-        }
-        return organization;
-    }
-    private Bundle getMedicationStatementBundle(String patientId) {
-
-        return client
-                .search()
-                .forResource(MedicationStatement.class)
-                .where(MedicationStatement.PATIENT.hasId(patientId))
-                .and(MedicationStatement.STATUS.exactly().code("active"))
-                .returnBundle(Bundle.class)
-                .execute();
-    }
-
-    private Bundle getMedicationRequestBundle(IGenericClient client,String patientId) {
-
-        return client
-                .search()
-                .forResource(MedicationStatement.class)
-                .where(MedicationRequest.PATIENT.hasId(patientId))
-                .and(MedicationRequest.STATUS.exactly().code("active"))
-                .returnBundle(Bundle.class)
-                .execute();
-    }
-
-    private Bundle getAllergyBundle(String patientId) {
-
-        return client
-                .search()
-                .forResource(AllergyIntolerance.class)
-                .where(AllergyIntolerance.PATIENT.hasId(patientId))
-                .returnBundle(Bundle.class)
-                .execute();
-    }
 
     private String saveToPDF(String inputFile, String outputFileName) {
         FileOutputStream os = null;
