@@ -78,22 +78,24 @@
             },
             "resource": {
                 "resourceType": "Organization",
-                
-                "identifier": [{
-                    "system": "https://fhir.nhs.uk/Id/ods-organization-code",
-                    "value": "M8X3A"
-                }],
+                "identifier": [
+                    {
+                        "system": "https://fhir.nhs.uk/Id/ods-organization-code",
+                        "value": "M8X3A"
+                    }
+                ],
                 "active": true,
-               
                 "name": "VIRTUALLY HEALTH SYSTEMS LTD",
-                "address": [{
-                    "line": [
-                        "652 HOLLOWAY ROAD"
-                    ],
-                    "city": "LONDON",
-                    "postalCode": "N19 3NU",
-                    "country": "ENGLAND"
-                }]
+                "address": [
+                    {
+                        "line": [
+                            "652 HOLLOWAY ROAD"
+                        ],
+                        "city": "LONDON",
+                        "postalCode": "N19 3NU",
+                        "country": "ENGLAND"
+                    }
+                ]
             }
         },
         {
@@ -150,6 +152,60 @@
                 },
                 "item": [
                     {
+                        "linkId": "exposure",
+                        "item": [
+                            {
+                                "linkId": "exposure-type",
+                                "text": "Exposure Type",
+                                "answer": [
+                                    {
+                                        "valueCoding": {
+                                            "system": "http://snomed.info/sct",
+                                            "code": "12802171000006100",
+                                            "display": "Exposure to 2019-nCoV (Wuhan) infection"
+                                        }
+                                    }
+                                ]
+                            },
+                            {
+                                "linkId": "exposure-date",
+                                "text": "Onset",
+                                "answer": [
+                                    {
+                                        "valueDate": "2020-03-01"
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "linkId": "infection",
+                        "item": [
+                            {
+                                "linkId": "infection-type",
+                                "text": "Infection Type",
+                                "answer": [
+                                    {
+                                        "valueCoding": {
+                                            "system": "http://snomed.info/sct",
+                                            "code": "12802181000006102",
+                                            "display": "Suspected 2019-nCoV (Wuhan) infection"
+                                        }
+                                    }
+                                ]
+                            },
+                            {
+                                "linkId": "infection-date",
+                                "text": "Onset",
+                                "answer": [
+                                    {
+                                        "valueDate": "2020-03-01"
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
                         "linkId": "infection",
                         "item": [
                             {
@@ -203,6 +259,87 @@
                                 }
                             }
                         ]
+                    },
+                    {
+                        "linkId": "1",
+                        "text": "My Condition",
+                        "answer": [
+                            {
+                                "valueString": "Fatigue and Tiredness"
+                            }
+                        ]
+                    },
+                    {
+                        "linkId": "fat-1",
+                        "text": "Please describe your symptoms of fatigue or tiredness in as much detail as possible.",
+                        "answer": [
+                            {
+                                "valueString": "Started a new job and exercising hard for a cycling event in July. However even when I rest I am tired and can't sleep well"
+                            }
+                        ]
+                    },
+                    {
+                        "linkId": "fat-2",
+                        "text": "How long have you had these symptoms?",
+                        "answer": [
+                            {
+                                "valueString": "Since xmas"
+                            }
+                        ]
+                    },
+                    {
+                        "linkId": "fat-3",
+                        "text": "Have you had similar symptoms before? If so, when and how long did they last for?",
+                        "answer": [
+                            {
+                                "valueString": "No"
+                            }
+                        ]
+                    },
+                    {
+                        "linkId": "fat-4",
+                        "text": "Have you had any tests for this before?",
+                        "answer": [
+                            {
+                                "valueString": "No"
+                            }
+                        ]
+                    },
+                    {
+                        "linkId": "fat-5",
+                        "text": "Have you had influenza or any other type of infection recently?",
+                        "answer": [
+                            {
+                                "valueString": "No"
+                            }
+                        ]
+                    },
+                    {
+                        "linkId": "fat-7",
+                        "text": "Have you been abroad recently?",
+                        "answer": [
+                            {
+                                "valueString": "No"
+                            }
+                        ]
+                    },
+                    {
+                        "linkId": "fat-8",
+                        "text": "Have you been passing urine more often or getting more thirsty than usual?",
+                        "answer": [
+                            {
+                                "valueString": "No"
+                            }
+                        ]
+                    },
+                    {
+                        "linkId": "fat-9",
+                        "text": "How is this impacting your daily life? Please share any information you feel is relevant about your mood or changes in your life recently.",
+                        "answer": [
+                            {
+                                "valueString": "Tired in the afternoon and often need a snooze. Can often feel depressed, especially during prolonged rest periods from exercising and away from my bike"
+                            }
+                        ]
                     }
                 ]
             }
@@ -226,19 +363,19 @@
                 },
                 "type": [
                     {
-                      "coding": [
-                        {
-                          "system": "http://snomed.info/sct",
-                          "code": "448337001",
-                          "display": "Telemedicine consultation with patient"
-                        }
-                      ]
+                        "coding": [
+                            {
+                                "system": "http://snomed.info/sct",
+                                "code": "448337001",
+                                "display": "Telemedicine consultation with patient"
+                            }
+                        ]
                     }
-                  ],
+                ],
                 "subject": {
                     "reference": "urn:uuid:b4938675-8124-4eef-a7f4-7d53b2172073"
                 },
-                "serviceProvider" : {
+                "serviceProvider": {
                     "reference": "urn:uuid:aef19c37-7cae-4109-b303-a67b89014cbb",
                     "display": "Virtually Healthcare"
                 }
@@ -423,7 +560,7 @@
             },
             "resource": {
                 "resourceType": "Observation",
-                "identifier":  [
+                "identifier": [
                     {
                         "system": "https://tools.ietf.org/html/rfc4122",
                         "value": "068c5c3c-cf11-4f7a-a58a-c445e9848657"
@@ -435,7 +572,7 @@
                 },
                 "status": "final",
                 "code": {
-                    "coding":  [
+                    "coding": [
                         {
                             "system": "http://snomed.info/sct",
                             "code": "75367002",
@@ -455,10 +592,10 @@
                         "reference": "urn:uuid:da232704-ed83-4767-b22b-00f0fabc5045"
                     }
                 ],
-                "component":  [
+                "component": [
                     {
                         "code": {
-                            "coding":  [
+                            "coding": [
                                 {
                                     "system": "http://snomed.info/sct",
                                     "code": "72313002",
@@ -480,7 +617,7 @@
                     },
                     {
                         "code": {
-                            "coding":  [
+                            "coding": [
                                 {
                                     "system": "http://snomed.info/sct",
                                     "code": "1091811000000102",

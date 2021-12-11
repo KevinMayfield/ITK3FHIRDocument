@@ -107,7 +107,7 @@ public class FhirBundleUtil {
                 Encounter encounter = (Encounter) entry.getResource();
                 encounter.setSubject(new Reference(uuidtag+patient.getId()));
                 if (encounter.hasServiceProvider() && encounter.getServiceProvider().getReference()!=null) {
-                    encounter.setServiceProvider(getUUIDReference(encounter.getServiceProvider()));
+                    encounter.getServiceProvider().setReference(getUUIDReference(encounter.getServiceProvider()).getReference());
                 } else {
                     encounter.setServiceProvider(null);
                 }
@@ -200,11 +200,20 @@ public class FhirBundleUtil {
         for (Bundle.BundleEntryComponent entry : bundle.getEntry()) {
             Resource resource = entry.getResource();
             resource.setId(getNewId(resource));
-            fhirDocument.addEntry().setResource(entry.getResource()).setFullUrl(uuidtag + resource.getId());
-            if (entry.getResource() instanceof Patient) {
-                patient = (Patient) entry.getResource();
+            if (!alreadyPresent(resource)) {
+                fhirDocument.addEntry().setResource(entry.getResource()).setFullUrl(uuidtag + resource.getId());
+                if (entry.getResource() instanceof Patient) {
+                    patient = (Patient) entry.getResource();
+                }
             }
         }
+    }
+
+    private Boolean alreadyPresent(Resource resource) {
+        for (Bundle.BundleEntryComponent entry  : fhirDocument.getEntry()) {
+            if (entry.getResource().getId() == resource.getId()) return true;
+        }
+        return false;
     }
 
     private Reference getUUIDReference(Reference reference) {

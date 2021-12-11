@@ -167,6 +167,9 @@ public class FhirDocumentApp implements CommandLineRunner {
         Composition.SectionComponent section = fhirDoc.getConditionSection(fhirBundleUtil.getFhirDocument());
         if (section.getEntry().size()>0) composition.addSection(section);
 
+        section = fhirDoc.getAttendanceDetailsSection(fhirBundleUtil.getFhirDocument());
+        if (section.getEntry().size()>0) composition.addSection(section);
+
         section = fhirDoc.getMedicationStatementSection(fhirBundleUtil.getFhirDocument());
         if (section.getEntry().size()>0) composition.addSection(section);
 

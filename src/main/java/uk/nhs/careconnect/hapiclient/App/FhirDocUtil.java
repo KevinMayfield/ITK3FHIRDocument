@@ -133,6 +133,38 @@ public class FhirDocUtil {
         return section;
     }
 
+    public Composition.SectionComponent getAttendanceDetailsSection(Bundle bundle) {
+        Composition.SectionComponent section = new Composition.SectionComponent();
+
+        ArrayList<QuestionnaireResponse>  questionnaireResponses = new ArrayList<>();
+
+        section.getCode().addCoding()
+                .setSystem(SNOMEDCT)
+                .setCode("1077881000000105")
+                .setDisplay("Attendance details");
+        section.setTitle("Attendance details");
+
+        for (Bundle.BundleEntryComponent entry : bundle.getEntry()) {
+            if (entry.getResource() instanceof QuestionnaireResponse) {
+                QuestionnaireResponse questionnaireResponse = (QuestionnaireResponse) entry.getResource();
+                for (QuestionnaireResponse.QuestionnaireResponseItemComponent item : questionnaireResponse.getItem()){
+                    item.getText();
+                    for (QuestionnaireResponse.QuestionnaireResponseItemAnswerComponent answer : item.getAnswer()) {
+                      //  answer.getValueCoding().getDisplay()
+
+                    }
+                };
+                section.getEntry().add(new Reference("urn:uuid:"+questionnaireResponse.getId()));
+                questionnaireResponses.add(questionnaireResponse);
+            }
+        }
+        ctxThymeleaf.clearVariables();
+        ctxThymeleaf.setVariable("questionnaireResponses", questionnaireResponses);
+
+        section.getText().setDiv(getDiv("questionnaireResponse")).setStatus(Narrative.NarrativeStatus.GENERATED);
+        return section;
+    }
+
     public Composition.SectionComponent getMedicationRequestSection(Bundle bundle) {
         Composition.SectionComponent section = new Composition.SectionComponent();
 
