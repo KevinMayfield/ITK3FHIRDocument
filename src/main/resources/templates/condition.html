@@ -9,13 +9,14 @@
             <tr>
                 <th>Date</th>
                 <th>Type</th>
-
+                <th>Notes</th>
             </tr>
             </thead>
             <tbody>
                 <tr th:each="condition : ${conditions}">
-                    <td th:text="${#dates.format(condition.getAssertedDate(),'dd MMM YYYY')}">Unknown</td>
+                    <td th:text="${#dates.format(condition.getOnsetDateTimeType().getValue(),'dd MMM YYYY')}">Unknown</td>
                     <td th:text="${condition.getCode().getCodingFirstRep().getDisplay()}">No Condition given</td>
+                    <td th:text="${condition.getNoteFirstRep().getText()}">No Condition given</td>
 
                 </tr>
             </tbody>

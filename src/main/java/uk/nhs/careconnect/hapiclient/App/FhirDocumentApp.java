@@ -2,12 +2,8 @@ package uk.nhs.careconnect.hapiclient.App;
 
 
 import ca.uhn.fhir.context.FhirContext;
-import ca.uhn.fhir.model.api.Include;
-import ca.uhn.fhir.rest.api.EncodingEnum;
-import ca.uhn.fhir.rest.client.api.IGenericClient;
 import ca.uhn.fhir.rest.server.exceptions.UnprocessableEntityException;
 import org.hl7.fhir.dstu3.model.*;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,10 +11,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.thymeleaf.TemplateEngine;
-
 import org.xhtmlrenderer.pdf.ITextRenderer;
-
-
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamResult;
@@ -106,7 +99,7 @@ public class FhirDocumentApp implements CommandLineRunner {
         composition.setDate(new Date());
         composition.setStatus(Composition.CompositionStatus.FINAL);
 
-        Organization leedsTH = cdrInterface.getOrganization("RR8");
+        Organization leedsTH = cdrInterface.getOrganization("M8X3A");
         compositionBundle.addEntry().setResource(leedsTH);
 
         composition.addAttester()
@@ -163,7 +156,7 @@ public class FhirDocumentApp implements CommandLineRunner {
 
 
         if (fhirBundleUtil.getPatient() == null) throw new UnprocessableEntityException();
-        fhirDoc.generatePatientHtml(fhirBundleUtil.getPatient(),fhirBundleUtil.getFhirDocument());
+       // fhirDoc.generatePatientHtml(fhirBundleUtil.getPatient(),fhirBundleUtil.getFhirDocument());
 
         fhirBundleUtil.processBundleResources(encounterBundle);
 
@@ -185,6 +178,8 @@ public class FhirDocumentApp implements CommandLineRunner {
 
         section = fhirDoc.getObservationSection(fhirBundleUtil.getFhirDocument());
         if (section.getEntry().size()>0) composition.addSection(section);
+
+        Condition condition;
 
         section = fhirDoc.getProcedureSection(fhirBundleUtil.getFhirDocument());
         if (section.getEntry().size()>0) composition.addSection(section);
