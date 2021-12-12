@@ -116,7 +116,7 @@ public class FhirDocUtil {
                 .setSystem("http://snomed.info/sct")
                 .setCode("713511000000103")
                 .setDisplay("Encounter administration");
-        section.setTitle("Encounters");
+        section.setTitle("Encounter");
 
         for (Bundle.BundleEntryComponent entry : bundle.getEntry()) {
             if (entry.getResource() instanceof Encounter) {
@@ -194,6 +194,32 @@ public class FhirDocUtil {
         return section;
     }
 
+    public Composition.SectionComponent getOrganisation(Bundle bundle, String ODSCode, Coding coding, String title) {
+        Composition.SectionComponent section = new Composition.SectionComponent();
+
+        Organization organisation = null;
+
+        section.getCode().addCoding(coding);
+        section.setTitle(title);
+
+        for (Bundle.BundleEntryComponent entry : bundle.getEntry()) {
+            if (entry.getResource() instanceof Organization) {
+                Organization organization= (Organization) entry.getResource();
+                if (organization.getIdentifierFirstRep().getValue().equals(ODSCode)) {
+                    section.getEntry().add(new Reference("urn:uuid:" + organization.getId()));
+                    organisation = organization;
+                }
+            }
+        }
+        ctxThymeleaf.clearVariables();
+
+        if (organisation != null) {
+            ctxThymeleaf.setVariable("organisation", organisation);
+            section.getText().setDiv(getDiv("organisation")).setStatus(Narrative.NarrativeStatus.GENERATED);
+        }
+        return section;
+    }
+
     public Composition.SectionComponent getObservationSection(Bundle bundle) {
         Composition.SectionComponent section = new Composition.SectionComponent();
 
@@ -252,21 +278,30 @@ public class FhirDocUtil {
     }
 
     public Patient generatePatientHtml(Patient patient, Bundle fhirDocument) {
-        if (!patient.hasText()) {
 
-            ctxThymeleaf.clearVariables();
-            ctxThymeleaf.setVariable("patient", patient);
-            for (Bundle.BundleEntryComponent entry : fhirDocument.getEntry()) {
-                if (entry.getResource() instanceof Practitioner) ctxThymeleaf.setVariable("gp", entry.getResource());
-                if (entry.getResource() instanceof Organization) ctxThymeleaf.setVariable("practice", entry.getResource());
-                Practitioner practice;
 
-            }
+        ctxThymeleaf.clearVariables();
+        ctxThymeleaf.setVariable("patient", patient);
+        for (Bundle.BundleEntryComponent entry : fhirDocument.getEntry()) {
+            if (entry.getResource() instanceof Practitioner) ctxThymeleaf.setVariable("gp", entry.getResource());
+            if (entry.getResource() instanceof Organization) ctxThymeleaf.setVariable("practice", entry.getResource());
+            Practitioner practice;
 
-            patient.getText().setDiv(getDiv("patient")).setStatus(Narrative.NarrativeStatus.GENERATED);
-            log.debug(patient.getText().getDiv().getValueAsString());
         }
+
+        patient.getText().setDiv(getDiv("patient")).setStatus(Narrative.NarrativeStatus.GENERATED);
+        log.debug(patient.getText().getDiv().getValueAsString());
+
         return patient;
+    }
+
+    public Composition generateCompositionHtml(Composition composition) {
+
+        ctxThymeleaf.clearVariables();
+        ctxThymeleaf.setVariable("composition", composition);
+
+        composition.getText().setDiv(getDiv("composition")).setStatus(Narrative.NarrativeStatus.GENERATED);
+        return composition;
     }
 
     private XhtmlNode getDiv(String template) {

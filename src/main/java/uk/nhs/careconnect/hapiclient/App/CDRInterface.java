@@ -29,8 +29,9 @@ public class CDRInterface {
                 .returnBundle(Bundle.class)
                 .execute();
 
-        return (org.hl7.fhir.dstu3.model.Bundle) ctxSTU3.newXmlParser().parseResource(ctxR4.newXmlParser().encodeResourceToString(patientBundle));
+        return convertBundletoSTU3(patientBundle);
     }
+
 
 
     public org.hl7.fhir.dstu3.model.Bundle getEncounterBundleRev(String encounterId) {
@@ -44,7 +45,32 @@ public class CDRInterface {
                 .count(100) // be careful of this TODO
                 .returnBundle(Bundle.class)
                 .execute();
-        return (org.hl7.fhir.dstu3.model.Bundle) ctxSTU3.newXmlParser().parseResource(ctxR4.newXmlParser().encodeResourceToString(bundle));
+
+
+        return convertBundletoSTU3(bundle);
+    }
+
+    private org.hl7.fhir.dstu3.model.Bundle convertBundletoSTU3(Bundle bundle) {
+        org.hl7.fhir.dstu3.model.Bundle stu3Bundle = new org.hl7.fhir.dstu3.model.Bundle();
+        for (Bundle.BundleEntryComponent entryComponent : bundle.getEntry()) {
+            org.hl7.fhir.dstu3.model.Resource resourceSTU3 = (org.hl7.fhir.dstu3.model.Resource) ctxSTU3.newXmlParser().parseResource(ctxR4.newXmlParser().encodeResourceToString(entryComponent.getResource()));
+            if (entryComponent.getResource() instanceof Encounter) {
+                Encounter encounter = (Encounter) entryComponent.getResource();
+                org.hl7.fhir.dstu3.model.Encounter encounterSTU3 = (org.hl7.fhir.dstu3.model.Encounter) resourceSTU3;
+                if (encounter.hasServiceType()) {
+                    encounterSTU3.setClass_(
+                            new org.hl7.fhir.dstu3.model.Coding()
+                                    .setCode(encounter.getServiceType().getCodingFirstRep().getCode())
+                                    .setSystem(encounter.getServiceType().getCodingFirstRep().getSystem())
+                                    .setDisplay(encounter.getServiceType().getCodingFirstRep().getDisplay())
+                    );
+                }
+                stu3Bundle.addEntry().setResource(encounterSTU3).setFullUrl(entryComponent.getFullUrl());
+            } else {
+                stu3Bundle.addEntry().setResource(resourceSTU3).setFullUrl(entryComponent.getFullUrl());
+            }
+        }
+        return stu3Bundle;
     }
     public org.hl7.fhir.dstu3.model.Bundle getConditionBundle(String patientId) {
 
@@ -56,8 +82,9 @@ public class CDRInterface {
                 .returnBundle(Bundle.class)
                 .execute();
 
-        return (org.hl7.fhir.dstu3.model.Bundle) ctxSTU3.newXmlParser().parseResource(ctxR4.newXmlParser().encodeResourceToString(bundle));
+        return convertBundletoSTU3(bundle);
     }
+
     public org.hl7.fhir.dstu3.model.Bundle getEncounterBundle(String patientId) {
 
         Bundle bundle =  client
@@ -67,7 +94,7 @@ public class CDRInterface {
                 .count(3) // Last 3 entries same as GP Connect
                 .returnBundle(Bundle.class)
                 .execute();
-        return (org.hl7.fhir.dstu3.model.Bundle) ctxSTU3.newXmlParser().parseResource(ctxR4.newXmlParser().encodeResourceToString(bundle));
+        return convertBundletoSTU3(bundle);
     }
 
     public org.hl7.fhir.dstu3.model.Organization getOrganization( String sdsCode) {
@@ -85,6 +112,7 @@ public class CDRInterface {
         }
         return (org.hl7.fhir.dstu3.model.Organization) ctxSTU3.newXmlParser().parseResource(ctxR4.newXmlParser().encodeResourceToString(organization));
     }
+
     public org.hl7.fhir.dstu3.model.Bundle getMedicationStatementBundle(String patientId) {
 
         Bundle bundle = client
@@ -94,8 +122,9 @@ public class CDRInterface {
                 .and(MedicationStatement.STATUS.exactly().code("active"))
                 .returnBundle(Bundle.class)
                 .execute();
-        return (org.hl7.fhir.dstu3.model.Bundle) ctxSTU3.newXmlParser().parseResource(ctxR4.newXmlParser().encodeResourceToString(bundle));
+        return convertBundletoSTU3(bundle);
     }
+
 
     public org.hl7.fhir.dstu3.model.Bundle getMedicationRequestBundle(IGenericClient client,String patientId) {
 
@@ -106,7 +135,7 @@ public class CDRInterface {
                 .and(MedicationRequest.STATUS.exactly().code("active"))
                 .returnBundle(Bundle.class)
                 .execute();
-        return (org.hl7.fhir.dstu3.model.Bundle) ctxSTU3.newXmlParser().parseResource(ctxR4.newXmlParser().encodeResourceToString(bundle));
+        return convertBundletoSTU3(bundle);
     }
 
     public org.hl7.fhir.dstu3.model.Bundle getAllergyBundle(String patientId) {
@@ -117,7 +146,7 @@ public class CDRInterface {
                 .where(AllergyIntolerance.PATIENT.hasId(patientId))
                 .returnBundle(Bundle.class)
                 .execute();
-        return (org.hl7.fhir.dstu3.model.Bundle) ctxSTU3.newXmlParser().parseResource(ctxR4.newXmlParser().encodeResourceToString(bundle));
+        return convertBundletoSTU3(bundle);
     }
 
 }

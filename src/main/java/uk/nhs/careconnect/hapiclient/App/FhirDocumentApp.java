@@ -95,7 +95,7 @@ public class FhirDocumentApp implements CommandLineRunner {
         compositionBundle.addEntry().setResource(composition);
 
         // composition.getMeta().addProfile(CareConnectProfile.Composition_1);
-        composition.setTitle("Encounter Document");
+        composition.setTitle("Patient Consultation");
         composition.setDate(new Date());
         composition.setStatus(Composition.CompositionStatus.FINAL);
 
@@ -106,17 +106,6 @@ public class FhirDocumentApp implements CommandLineRunner {
                 .setParty(new Reference("Organization/"+leedsTH.getIdElement().getIdPart()))
                 .addMode(Composition.CompositionAttestationMode.OFFICIAL);
 
-
-        Device device = new Device();
-        device.setId(UUID.randomUUID().toString());
-        device.getType().addCoding()
-                .setSystem("http://snomed.info/sct")
-                .setCode("58153004")
-                .setDisplay("Android");
-        device.setOwner(new Reference("Organization/"+leedsTH.getIdElement().getIdPart()));
-        compositionBundle.addEntry().setResource(device);
-
-        composition.addAuthor(new Reference("Device/"+device.getIdElement().getIdPart()));
 
         composition.getType().addCoding()
                 .setCode("371531000")
@@ -152,11 +141,41 @@ public class FhirDocumentApp implements CommandLineRunner {
             composition.setSubject(new Reference("Patient/"+patientId));
             patientId = fhirBundleUtil.getPatient().getId();
 
+
+            // date
+            if (encounter.hasPeriod() && encounter.getPeriod().hasStart()) {
+                composition.setDate(encounter.getPeriod().getStart());
+            }
+
+            // careSetting
+            if (encounter.hasClass_() && encounter.getClass_().hasCode()) {
+                composition.addExtension()
+                        .setUrl("https://fhir.hl7.org.uk/STU3/StructureDefinition/Extension-CareConnect-CareSettingType-1")
+                        .setValue(
+                                new CodeableConcept().addCoding(
+                                        encounter.getClass_()
+                                )
+                        );
+            }
+
+            // author
+            if (encounter.hasParticipant()) {
+                composition.addAuthor(encounter.getParticipantFirstRep().getIndividual());
+            }
+
+            // encounter
+            composition.setEncounter(new Reference().setReference("Encounter"+encounter.getId()));
+
+            // custodian
+            if (encounter.hasServiceProvider()) {
+                composition.setCustodian(encounter.getServiceProvider());
+            }
         }
 
 
         if (fhirBundleUtil.getPatient() == null) throw new UnprocessableEntityException();
-       // fhirDoc.generatePatientHtml(fhirBundleUtil.getPatient(),fhirBundleUtil.getFhirDocument());
+        fhirDoc.generatePatientHtml(fhirBundleUtil.getPatient(),fhirBundleUtil.getFhirDocument());
+        fhirDoc.generateCompositionHtml(composition);
 
         fhirBundleUtil.processBundleResources(encounterBundle);
 
@@ -182,10 +201,19 @@ public class FhirDocumentApp implements CommandLineRunner {
         section = fhirDoc.getObservationSection(fhirBundleUtil.getFhirDocument());
         if (section.getEntry().size()>0) composition.addSection(section);
 
-        Condition condition;
-
         section = fhirDoc.getProcedureSection(fhirBundleUtil.getFhirDocument());
         if (section.getEntry().size()>0) composition.addSection(section);
+
+        if (fhirBundleUtil.getPatient().hasGeneralPractitioner()) {
+            section = fhirDoc.getOrganisation(fhirBundleUtil.getFhirDocument(),
+                    fhirBundleUtil.getPatient().getGeneralPractitionerFirstRep().getIdentifier().getValue(),
+                    new Coding().setSystem(SNOMEDCT)
+                            .setCode("886711000000101")
+                            .setDisplay("GP practice"),
+                    "GP Practice Details");
+            if (section.getEntry().size() > 0) composition.addSection(section);
+        }
+
 
         return fhirBundleUtil.getFhirDocument();
     }

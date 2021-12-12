@@ -1,0 +1,21 @@
+<div xmlns:th="http://www.w3.org/1999/xhtml">
+    <table>
+        <tbody>
+            <tr>
+                <td>Name</td>
+                <td th:text="${organisation.getName()}"></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>ODS Code</td>
+                <td th:text="${organisation.getIdentifierFirstRep().getValue()}"></td>
+            </tr>
+
+        </tbody>
+
+    </table>
+</div>
+

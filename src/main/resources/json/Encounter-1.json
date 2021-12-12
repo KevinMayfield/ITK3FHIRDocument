@@ -10,22 +10,14 @@
             "fullUrl": "urn:uuid:b4938675-8124-4eef-a7f4-7d53b2172073",
             "request": {
                 "method": "PUT",
-                "url": "Patient?identifier=https://fhir.nhs.uk/Id/nhs-number|9876543210"
+                "url": "Patient?identifier=https://fhir.nhs.uk/Id/nhs-number|9876543219"
             },
             "resource": {
                 "resourceType": "Patient",
                 "identifier": [
                     {
                         "system": "https://fhir.nhs.uk/Id/nhs-number",
-                        "value": "9876543210"
-                    },
-                    {
-                        "system": "https://fhir.leedsth.nhs.uk/Id/pas-number",
-                        "value": "ABC8650149"
-                    },
-                    {
-                        "system": "https://fhir.leedsth.nhs.uk/Id/PPMIdentifier",
-                        "value": "1"
+                        "value": "9876543219"
                     }
                 ],
                 "active": true,
@@ -66,6 +58,16 @@
                         "city": "Nottingham",
                         "district": "Derbyshire",
                         "postalCode": "NG10 1ZZ"
+                    }
+                ],
+                "generalPractitioner" : [
+                    {
+                        "reference" : "urn:uuid:1272fa8e-4903-4e2a-aa1d-c64727ead3c0",
+                        "identifier": {
+                            "system": "https://fhir.nhs.uk/Id/ods-organization-code",
+                            "value": "F83004"
+                        },
+                        "display": "ARCHWAY MEDICAL CENTRE"
                     }
                 ]
             }
@@ -358,6 +360,14 @@
                         "value": "506ab3bc-8efa-40bc-a7ad-1643d467eb4f"
                     }
                 ],
+                "status": "finished",
+                "participant": [
+                    {
+                        "individual" : {
+                            "reference" : "urn:uuid:da232704-ed83-4767-b22b-00f0fabc5045"
+                        }
+                    }
+                ],
                 "period": {
                     "start": "2021-10-20T09:15:00+10:00"
                 },
@@ -372,6 +382,15 @@
                         ]
                     }
                 ],
+                "serviceType": {
+                    "coding": [
+                        {
+                            "system": "http://snomed.info/sct",
+                            "code": "413294000",
+                            "display": "Community health services"
+                        }
+                    ]
+                },
                 "subject": {
                     "reference": "urn:uuid:b4938675-8124-4eef-a7f4-7d53b2172073"
                 },
@@ -696,6 +715,38 @@
                         "text": "Has cough and high body temp, this may be over training during lockdown. Cytokine triggered inflammation?"
                     }
                 ]
+            }
+        },
+        {
+            "fullUrl": "urn:uuid:1272fa8e-4903-4e2a-aa1d-c64727ead3c0",
+            "request": {
+                "method": "PUT",
+                "url": "Organization?identifier=https://fhir.nhs.uk/Id/ods-organization-code|F83004"
+            },
+            "resource" : {
+                "resourceType": "Organization",
+                "id": "F83004",
+                "identifier": [{
+                    "system": "https://fhir.nhs.uk/Id/ods-organization-code",
+                    "value": "F83004"
+                }],
+                "active": true,
+                "name": "ARCHWAY MEDICAL CENTRE",
+                "telecom": [
+                    {
+                        "system": "phone",
+                        "value": "020 72720111"
+                    }
+                ],
+                "address": [{
+                    "line": [
+                        "652 HOLLOWAY ROAD"
+                    ],
+                    "city": "LONDON",
+                    "district": "GREATER LONDON",
+                    "postalCode": "N19 3NU",
+                    "country": "ENGLAND"
+                }]
             }
         }
     ]

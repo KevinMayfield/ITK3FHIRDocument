@@ -61,6 +61,9 @@ public class FhirBundleUtil {
                 if (condition.hasContext()) {
                     condition.setContext(getUUIDReference(condition.getContext()));
                 }
+                if (condition.hasAsserter()) {
+                   condition.getAsserter().setReference(getUUIDReference(condition.getAsserter()).getReference());
+                }
             }
 
             if (entry.getResource() instanceof Composition) {
@@ -132,6 +135,11 @@ public class FhirBundleUtil {
                 if (observation.hasContext()) {
                     observation.setContext(getUUIDReference(observation.getContext()));
                 }
+                if (observation.hasPerformer()) {
+                    for (Reference reference : observation.getPerformer()) {
+                        reference.setReference(getUUIDReference(reference).getReference());
+                    }
+                }
 
             }
 
@@ -188,6 +196,14 @@ public class FhirBundleUtil {
                 procedure.setSubject(new Reference(uuidtag+patient.getId()));
                 if (procedure.hasContext()) {
                     procedure.setContext(getUUIDReference(procedure.getContext()));
+                }
+            }
+
+            if (entry.getResource() instanceof QuestionnaireResponse) {
+                QuestionnaireResponse questionnaireResponse = (QuestionnaireResponse) entry.getResource();
+                questionnaireResponse.setSubject(new Reference(uuidtag+patient.getId()));
+                if (questionnaireResponse.hasAuthor()) {
+                    questionnaireResponse.getAuthor().setReference(getUUIDReference(questionnaireResponse.getAuthor()).getReference());
                 }
             }
 
