@@ -2,20 +2,20 @@
     <table>
         <tbody>
             <tr>
-                <td>Name</td>
-                <td th:text="${organisation.getName()}"></td>
+                <td>Organisation</td>
+                <td>Contact</td>
             </tr>
             <tr>
-                <td></td>
-                <td></td>
+                <td>
+                [[${organisation.getName()}]] ([[${organisation.getIdentifierFirstRep().getValue()}]])
+                </td>
+                <td>
+                    <span th:each="telecom : ${organisation.getTelecom()}" th:remove="tag">
+                        [[${telecom.getValue()}]]<br/>
+                    </span>
+                </td>
             </tr>
-            <tr>
-                <td>ODS Code</td>
-                <td th:text="${organisation.getIdentifierFirstRep().getValue()}"></td>
-            </tr>
-
         </tbody>
-
     </table>
 </div>
 

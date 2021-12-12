@@ -36,7 +36,7 @@ public class FhirDocUtil {
                 .setSystem("http://snomed.info/sct")
                 .setCode("887151000000100")
                 .setDisplay("Problems and issues");
-        section.setTitle("Problems and issues");
+        section.setTitle("Problems and Issues");
 
         for (Bundle.BundleEntryComponent entry : bundle.getEntry()) {
             if (entry.getResource() instanceof Condition) {
@@ -144,7 +144,7 @@ public class FhirDocUtil {
                 .setSystem(SNOMEDCT)
                 .setCode("1077881000000105")
                 .setDisplay("Attendance details");
-        section.setTitle("Attendance details");
+        section.setTitle("Consulation notes");
 
         for (Bundle.BundleEntryComponent entry : bundle.getEntry()) {
             if (entry.getResource() instanceof QuestionnaireResponse) {
@@ -231,7 +231,7 @@ public class FhirDocUtil {
                 .setSystem(SNOMEDCT)
                 .setCode("425044008")
                 .setDisplay("Physical exam section");
-        section.setTitle("Physical exam section");
+        section.setTitle("Observations");
 
         for (Bundle.BundleEntryComponent entry : bundle.getEntry()) {
             if (entry.getResource() instanceof Observation) {
@@ -286,7 +286,7 @@ public class FhirDocUtil {
                 .setSystem(SNOMEDCT)
                 .setCode("887231000000104")
                 .setDisplay("Person completing record");
-        section.setTitle("Recorded by");
+        section.setTitle("Consultation Participants");
         Practitioner practitioner = null;
         Organization organization = null;
         for (Bundle.BundleEntryComponent entry : bundle.getEntry()) {

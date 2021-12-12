@@ -2,21 +2,23 @@
     <table>
         <tbody>
             <tr>
-                <td>Name</td>
-                <td th:text="${practitioner.getNameFirstRep().getNameAsSingleString()}"></td>
+                <td>Consultant/Dr</td>
+                <td>Contact</td>
             </tr>
             <tr>
-                <td></td>
-                <td></td>
-            </tr>
-            <tr th:each="identifier : ${practitioner.getIdentifier()}">
+                <td> [[${practitioner.getNameFirstRep().getNameAsSingleString()}]]
+                    <span th:each="identifier : ${practitioner.getIdentifier()}" th:remove="tag">
+                        <span th:switch="${identifier.getSystem()}" th:remove="tag">
+                            <p th:case="'https://fhir.nhs.uk/Id/gmc-number'" th:remove="tag"> ([[${identifier.getValue()}]]) </p>
+                            <p th:case="'https://fhir.nhs.uk/Id/gmp-number'" th:remove="tag"> ([[${identifier.getValue()}]])</p>
+                            <p th:case="*" th:text="${'Identifier ('+identifier.getSystem()+')'}" th:remove="tag"></p>
+                        </span>
+                        <br/>
+                    </span>
+                </td>
+                <td>
 
-                <div th:switch="${identifier.getSystem()}" th:remove="tag">
-                    <td th:case="'https://fhir.nhs.uk/Id/gmc-number'">GMC Number</td>
-                    <td th:case="'https://fhir.nhs.uk/Id/gmp-number'">GMP Number</td>
-                    <td th:case="*" th:text="${'Identifier ('+identifier.getSystem()+')'}"></td>
-                </div>
-                <td th:text="${identifier.getValue()}"></td>
+                </td>
             </tr>
         </tbody>
     </table>
