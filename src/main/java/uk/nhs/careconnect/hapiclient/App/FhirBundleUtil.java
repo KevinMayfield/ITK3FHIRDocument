@@ -27,7 +27,8 @@ public class FhirBundleUtil {
     FhirBundleUtil(Bundle.BundleType value) {
         fhirDocument = new Bundle()
                 .setType(value);
-        fhirDocument.getIdentifier().setValue(UUID.randomUUID().toString()).setSystem("https://tools.ietf.org/html/rfc4122");
+        fhirDocument.setId(UUID.randomUUID().toString());
+        fhirDocument.getIdentifier().setValue(fhirDocument.getId()).setSystem("https://tools.ietf.org/html/rfc4122");
     }
 
     public Bundle getFhirDocument() {

@@ -107,7 +107,7 @@ public class FhirDocUtil {
         return section;
     }
 
-    public Composition.SectionComponent getEncounterSection(Bundle bundle) {
+    public Composition.SectionComponent getEncounterSection(Composition composition, Bundle bundle) {
         Composition.SectionComponent section = new Composition.SectionComponent();
         // TODO Get Correct code.
         ArrayList<Encounter>  encounters = new ArrayList<>();
@@ -126,6 +126,8 @@ public class FhirDocUtil {
             }
         }
         ctxThymeleaf.clearVariables();
+        // This section should really be in composition
+        ctxThymeleaf.setVariable("composition", composition);
         ctxThymeleaf.setVariable("encounters", encounters);
 
         section.getText().setDiv(getDiv("encounter")).setStatus(Narrative.NarrativeStatus.GENERATED);

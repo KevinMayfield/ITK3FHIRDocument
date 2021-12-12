@@ -1,5 +1,30 @@
 
 <div>
+    <table>
+        <tbody>
+        <tr>
+            <td>Name</td>
+            <td th:text="${composition.getTitle()}"></td>
+        </tr>
+        <tr>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Document Type</td>
+            <td th:text="${composition.getType().getCodingFirstRep().getDisplay()}"></td>
+        </tr>
+        <tr>
+            <td>Date</td>
+            <td th:text="${#dates.format(composition.getDate(),'dd MMM YYYY HH:mm')}">Unknown</td>
+        </tr>
+        <tr th:if="${composition.getExtensionsByUrl('https://fhir.hl7.org.uk/STU3/StructureDefinition/Extension-CareConnect-CareSettingType-1').size()>0}" >
+            <td>Care Setting</td>
+            <td th:text="${composition.getExtensionsByUrl('https://fhir.hl7.org.uk/STU3/StructureDefinition/Extension-CareConnect-CareSettingType-1').get(0).getValue().getCodingFirstRep().getDisplay()}">Unknown</td>
+        </tr>
+        </tbody>
+
+    </table>
     <div th:if="${#lists.isEmpty(encounters)}">
         <p>None Recorded</p>
     </div>

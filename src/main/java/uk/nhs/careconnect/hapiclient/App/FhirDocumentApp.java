@@ -176,13 +176,15 @@ public class FhirDocumentApp implements CommandLineRunner {
 
         if (fhirBundleUtil.getPatient() == null) throw new UnprocessableEntityException();
         fhirDoc.generatePatientHtml(fhirBundleUtil.getPatient(),fhirBundleUtil.getFhirDocument());
-        fhirDoc.generateCompositionHtml(composition);
+
+        // This is not functioning correctly in the viewer.
+        //fhirDoc.generateCompositionHtml(composition);
 
         fhirBundleUtil.processBundleResources(encounterBundle);
 
         fhirBundleUtil.processReferences();
 
-        composition.addSection(fhirDoc.getEncounterSection(fhirBundleUtil.getFhirDocument()));
+        composition.addSection(fhirDoc.getEncounterSection(composition, fhirBundleUtil.getFhirDocument()));
 
         Composition.SectionComponent section = fhirDoc.getConditionSection(fhirBundleUtil.getFhirDocument());
         if (section.getEntry().size()>0) composition.addSection(section);
