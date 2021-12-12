@@ -75,6 +75,9 @@ public class FhirBundleUtil {
                         attester.setParty(getUUIDReference(attester.getParty()));
                     }
                 }
+                if (composition.hasEncounter()) {
+                    composition.getEncounter().setReference(getUUIDReference(composition.getEncounter()).getReference());
+                }
                 for (Reference reference : composition.getAuthor()) {
                     reference.setReference(getUUIDReference(reference).getReference());
                 }

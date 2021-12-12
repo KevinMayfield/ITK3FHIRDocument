@@ -19,10 +19,10 @@
                         <td th:text="${#dates.format(observation.getEffectiveDateTimeType().getValue(),'dd MMM YYYY HH:mm')}">Unknown</td>
 
                         <td th:text="${observation.getCode().getCodingFirstRep().getDisplay()}">No type given</td>
-                        <div th:if="${observation.hasValueQuantity()}">
+                        <div th:if="${observation.hasValueQuantity()}" th:remove="tag">
                             <td th:text="${observation.getValueQuantity().getValue()+' '+observation.getValueQuantity().getUnit()}">No provider specified</td>
                         </div>
-                        <div th:if="${!observation.hasValueQuantity()}">
+                        <div th:if="${!observation.hasValueQuantity()}" th:remove="tag">
                             <td th:text="${observation.getComponent().get(0).getValueQuantity().getValue()+'/'+observation.getComponent().get(1).getValueQuantity().getValue()+' '+observation.getComponent().get(0).getValueQuantity().getUnit()}">No provider specified</td>
                         </div>
                     </tr>

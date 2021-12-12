@@ -1,11 +1,11 @@
 <div>
-    <div th:if="${#lists.isEmpty(questionnaireResponses)}">
+    <div th:if="${#lists.isEmpty(questionnaireResponses)}" >
         <p>None Recorded</p>
     </div>
-    <span th:if="${not #lists.isEmpty(questionnaireResponses)}">
-        <span>
+    <span th:if="${not #lists.isEmpty(questionnaireResponses)}" th:remove="tag">
 
-            <span th:each="questionnaireResponse : ${questionnaireResponses}">
+
+            <span th:each="questionnaireResponse : ${questionnaireResponses}" th:remove="tag">
 
                 <table>
                     <thead>
@@ -16,44 +16,44 @@
                     </thead>
                     <tbody>
 
-                        <span th:each="item : ${questionnaireResponse.getItem()}">
+                        <span th:each="item : ${questionnaireResponse.getItem()}" th:remove="tag">
                             <tr th:if="${item.hasAnswer()}">
-                                <div th:if="${item.hasText()}">
+                                <div th:if="${item.hasText()}" th:remove="tag">
                                     <td th:text="${item.getText()}">Unknown</td>
                                 </div>
-                                <div th:if="${!item.hasText()}">
+                                <div th:if="${!item.hasText()}" th:remove="tag">
                                     <td ></td>
                                 </div>
                                 <td>
-                                    <span th:each="answer : ${item.getAnswer()}">
-                                        <span th:if="${answer.hasValueStringType()}">
+                                    <span th:each="answer : ${item.getAnswer()}" th:remove="tag">
+                                        <span th:if="${answer.hasValueStringType()}" th:remove="tag">
                                             <div th:text="${answer.getValueStringType().getValue()}">Uknown</div>
                                         </span>
-                                        <span th:if="${answer.hasValueCoding()}">
+                                        <span th:if="${answer.hasValueCoding()}" th:remove="tag">
                                             <div th:text="${answer.getValueCoding().getDisplay()}">Uknown</div>
                                         </span>
-                                        <span th:if="${answer.hasValueDateType()}">
+                                        <span th:if="${answer.hasValueDateType()}" th:remove="tag">
                                             <div th:text="${#dates.format(answer.getValueDateType().getValue(),'dd MMM YYYY')}">Unknown</div>
                                         </span>
                                     </span>
                                 </td>
                             </tr>
                             <tr th:each="subitem : ${item.getItem()}">
-                                <div th:if="${subitem.hasText()}">
+                                <div th:if="${subitem.hasText()}" th:remove="tag">
                                     <td th:text="${subitem.getText()}">Unknown</td>
                                 </div>
-                                <div th:if="${!subitem.hasText()}">
+                                <div th:if="${!subitem.hasText()}" th:remove="tag">
                                     <td ></td>
                                 </div>
                                 <td>
-                                    <span th:each="answer : ${subitem.getAnswer()}">
-                                        <span th:if="${answer.hasValueStringType()}">
+                                    <span th:each="answer : ${subitem.getAnswer()}" th:remove="tag">
+                                        <span th:if="${answer.hasValueStringType()}" th:remove="tag">
                                             <div th:text="${answer.getValueStringType().getValue()}">Uknown</div>
                                         </span>
-                                        <span th:if="${answer.hasValueCoding()}">
+                                        <span th:if="${answer.hasValueCoding()}" th:remove="tag">
                                             <div th:text="${answer.getValueCoding().getDisplay()}">Uknown</div>
                                         </span>
-                                        <span th:if="${answer.hasValueDateType()}">
+                                        <span th:if="${answer.hasValueDateType()}" th:remove="tag">
                                             <div th:text="${#dates.format(answer.getValueDateType().getValue(),'dd MMM YYYY')}">Unknown</div>
                                         </span>
                                     </span>
@@ -63,6 +63,5 @@
                     </tbody>
                 </table>
             </span>
-        </span>
     </span>
 </div>

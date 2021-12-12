@@ -93,6 +93,7 @@ public class FhirDocumentApp implements CommandLineRunner {
         composition = new Composition();
         composition.setId(UUID.randomUUID().toString());
         compositionBundle.addEntry().setResource(composition);
+        composition.setIdentifier(new Identifier().setSystem("https://tools.ietf.org/html/rfc4122").setValue(composition.getId()));
 
         // composition.getMeta().addProfile(CareConnectProfile.Composition_1);
         composition.setTitle("Patient Consultation");
@@ -164,7 +165,7 @@ public class FhirDocumentApp implements CommandLineRunner {
             }
 
             // encounter
-            composition.setEncounter(new Reference().setReference("Encounter"+encounter.getId()));
+            composition.setEncounter(new Reference().setReference(encounter.getId()));
 
             // custodian
             if (encounter.hasServiceProvider()) {

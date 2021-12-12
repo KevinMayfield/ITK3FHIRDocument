@@ -65,7 +65,7 @@
 
             <tr th:each="identifier : ${patient.getIdentifier()}">
 
-                <div th:switch="${identifier.getSystem()}">
+                <div th:switch="${identifier.getSystem()}" th:remove="tag">
                     <td th:case="'https://fhir.nhs.uk/Id/nhs-number'">NHS Number</td>
                     <td th:case="'http://hl7.org/fhir/sid/us-ssn'">US Social Security Number</td>
                     <td th:case="'urn:oid:2.16.840.1.113883.4.3.25'">Massachusetts Driver's License</td>
