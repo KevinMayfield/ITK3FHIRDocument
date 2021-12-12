@@ -279,6 +279,46 @@ public class FhirDocUtil {
         return section;
     }
 
+    public Composition.SectionComponent getProvenaceSection(Composition composition,Bundle bundle) {
+        Composition.SectionComponent section = new Composition.SectionComponent();
+
+        section.getCode().addCoding()
+                .setSystem(SNOMEDCT)
+                .setCode("887231000000104")
+                .setDisplay("Person completing record");
+        section.setTitle("Recorded by");
+        Practitioner practitioner = null;
+        Organization organization = null;
+        for (Bundle.BundleEntryComponent entry : bundle.getEntry()) {
+            if (composition.getCustodian().getReference().equals(entry.getFullUrl()) && entry.getResource() instanceof Organization ) {
+                organization = (Organization) entry.getResource();
+                section.getEntry().add(new Reference("urn:uuid:"+organization.getId()));
+            }
+            if (composition.getAuthorFirstRep().getReference().equals(entry.getFullUrl()) && entry.getResource() instanceof Practitioner ) {
+                practitioner= (Practitioner) entry.getResource();
+                section.getEntry().add(new Reference("urn:uuid:"+practitioner.getId()));
+            }
+        }
+        ctxThymeleaf.clearVariables();
+
+        ctxThymeleaf.setVariable("practitioner", practitioner);
+
+        ctxThymeleaf.setVariable("organisation", organization);
+        XhtmlNode nodePractitioner = getDiv("practitioner");
+        XhtmlNode nodeOrganisation = getDiv("organisation");
+       try {
+           XhtmlDocument parsed = xhtmlParser.parse("<div>"
+                   + nodePractitioner.getValueAsString()
+                   + nodeOrganisation.getValueAsString()
+                   + "</div>", null);
+           XhtmlNode xhtmlNode = parsed.getDocumentElement();
+           section.getText().setDiv(xhtmlNode).setStatus(Narrative.NarrativeStatus.GENERATED);
+       } catch (Exception ex) {
+           log.error(ex.getMessage());
+       }
+        return section;
+    }
+
     public Patient generatePatientHtml(Patient patient, Bundle fhirDocument) {
 
 

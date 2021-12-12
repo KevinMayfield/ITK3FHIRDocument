@@ -1,0 +1,24 @@
+<div xmlns:th="http://www.w3.org/1999/xhtml">
+    <table>
+        <tbody>
+            <tr>
+                <td>Name</td>
+                <td th:text="${practitioner.getNameFirstRep().getNameAsSingleString()}"></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr th:each="identifier : ${practitioner.getIdentifier()}">
+
+                <div th:switch="${identifier.getSystem()}" th:remove="tag">
+                    <td th:case="'https://fhir.nhs.uk/Id/gmc-number'">GMC Number</td>
+                    <td th:case="'https://fhir.nhs.uk/Id/gmp-number'">GMP Number</td>
+                    <td th:case="*" th:text="${'Identifier ('+identifier.getSystem()+')'}"></td>
+                </div>
+                <td th:text="${identifier.getValue()}"></td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+

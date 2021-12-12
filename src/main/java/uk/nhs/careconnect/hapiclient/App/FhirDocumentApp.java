@@ -207,6 +207,9 @@ public class FhirDocumentApp implements CommandLineRunner {
         section = fhirDoc.getProcedureSection(fhirBundleUtil.getFhirDocument());
         if (section.getEntry().size()>0) composition.addSection(section);
 
+        section = fhirDoc.getProvenaceSection(composition, fhirBundleUtil.getFhirDocument());
+        if (section.getEntry().size()>0) composition.addSection(section);
+
         if (fhirBundleUtil.getPatient().hasGeneralPractitioner()) {
             section = fhirDoc.getOrganisation(fhirBundleUtil.getFhirDocument(),
                     fhirBundleUtil.getPatient().getGeneralPractitionerFirstRep().getIdentifier().getValue(),
