@@ -210,7 +210,13 @@ public class FhirBundleUtil {
                     questionnaireResponse.getAuthor().setReference(getUUIDReference(questionnaireResponse.getAuthor()).getReference());
                 }
             }
-
+            if (entry.getResource() instanceof Task) {
+                Task task = (Task) entry.getResource();
+                task.setFor(new Reference(uuidtag+patient.getId()));
+                if (task.hasOwner()) {
+                    task.getOwner().setReference(getUUIDReference(task.getOwner()).getReference());
+                }
+            }
         }
     }
 

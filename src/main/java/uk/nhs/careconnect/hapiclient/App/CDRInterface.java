@@ -40,12 +40,15 @@ public class CDRInterface {
                 .search()
                 .forResource(Encounter.class)
                 .where(Patient.RES_ID.exactly().code(encounterId))
-                .revInclude(new Include("*"))
+                .revInclude(new Include("Condition:encounter"))
+                .revInclude(new Include("Observation:encounter"))
+                .revInclude(new Include("QuestionnaireResponse:encounter"))
+                .revInclude(new Include("Task:encounter"))
+                .revInclude(new Include("Procedure:encounter"))
                 .include(new Include("*"))
                 .count(100) // be careful of this TODO
                 .returnBundle(Bundle.class)
                 .execute();
-
 
         return convertBundletoSTU3(bundle);
     }
@@ -65,10 +68,25 @@ public class CDRInterface {
                                     .setDisplay(encounter.getServiceType().getCodingFirstRep().getDisplay())
                     );
                 }
-                stu3Bundle.addEntry().setResource(encounterSTU3).setFullUrl(entryComponent.getFullUrl());
-            } else {
-                stu3Bundle.addEntry().setResource(resourceSTU3).setFullUrl(entryComponent.getFullUrl());
+                resourceSTU3 = encounterSTU3;
+            } if (entryComponent.getResource() instanceof Task) {
+                Task task = (Task) entryComponent.getResource();
+                org.hl7.fhir.dstu3.model.Task taskSTU3 = (org.hl7.fhir.dstu3.model.Task) resourceSTU3;
+                if (task.hasReasonCode()) {
+                    taskSTU3.setReason(new org.hl7.fhir.dstu3.model.CodeableConcept()
+                            .addCoding(
+                                    new org.hl7.fhir.dstu3.model.Coding()
+                                            .setCode(task.getReasonCode().getCodingFirstRep().getCode())
+                                            .setDisplay(task.getReasonCode().getCodingFirstRep().getDisplay())
+                                            .setSystem(task.getReasonCode().getCodingFirstRep().getSystem())
+
+                            )
+                    );
+                }
+                resourceSTU3 = taskSTU3;
             }
+            stu3Bundle.addEntry().setResource(resourceSTU3).setFullUrl(entryComponent.getFullUrl());
+
         }
         return stu3Bundle;
     }

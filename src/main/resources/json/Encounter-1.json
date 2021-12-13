@@ -748,6 +748,97 @@
                     "country": "ENGLAND"
                 }]
             }
+        },{
+            "fullUrl": "urn:uuid:3b939e91-2e06-4870-994c-13a026000123",
+            "request": {
+                "method": "PUT",
+                "url": "Task?identifier=3b939e91-2e06-4870-994c-13a026000123"
+            },
+            "resource" : {
+                "resourceType": "Task",
+                "identifier": [
+                    {
+                        "system": "https://tools.ietf.org/html/rfc4122",
+                        "value": "3b939e91-2e06-4870-994c-13a026000123"
+                    }
+                ],
+                "status": "requested",
+                "intent": "order",
+                "focus": {
+                    "reference" : "urn:uuid:506ab3bc-8efa-40bc-a7ad-1643d467eb4f"
+                },
+                "for": {
+                    "reference": "urn:uuid:b4938675-8124-4eef-a7f4-7d53b2172073"
+                },
+                "owner": {
+                    "reference": "urn:uuid:1272fa8e-4903-4e2a-aa1d-c64727ead3c0"
+                },
+                "authoredOn": "2021-10-09T12:00:00+00:00",
+                "reasonCode": {
+                    "coding": [
+                        {
+                            "system": "http://snomed.info/sct",
+                            "code": "305213002",
+                            "display": "Sending of medical records to GP"
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "fullUrl": "urn:uuid:06570d9e-1dd7-49b6-8276-c903eef74b73",
+            "request": {
+                "method": "PUT",
+                "url": "Task?identifier=06570d9e-1dd7-49b6-8276-c903eef74b73"
+            },
+            "resource": {
+                "resourceType": "Task",
+                "identifier": [
+                    {
+                        "system": "https://tools.ietf.org/html/rfc4122",
+                        "value": "06570d9e-1dd7-49b6-8276-c903eef74b73"
+                    }
+                ],
+                "status": "requested",
+                "intent": "order",
+                "code": {
+                    "coding": [
+                        {
+                            "system": "http://hl7.org/fhir/CodeSystem/task-code",
+                            "code": "fulfill",
+                            "display": "Fulfill the focal request"
+                        }
+                    ]
+                },
+                "for": {
+                    "reference": "urn:uuid:b4938675-8124-4eef-a7f4-7d53b2172073"
+                },
+                "encounter": {
+                    "reference": "urn:uuid:506ab3bc-8efa-40bc-a7ad-1643d467eb4f",
+                    "display": "Patient entered data"
+                },
+                "requester": {
+                    "reference": "urn:uuid:da232704-ed83-4767-b22b-00f0fabc5045"
+                },
+                "authoredOn": "2021-10-09T12:00:00+00:00",
+                "note" : [
+                    {
+                        "text" : "Patient presented at Austhorpe Hospital ED with breathing difficulties. As per NICE guideliines please review asthma medication. Please see discharge summary for more details"
+                    }
+                ],
+                "owner" : {
+                    "reference": "urn:uuid:aef19c37-7cae-4109-b303-a67b89014cbb"
+                },
+                "reasonCode": {
+                    "coding": [
+                        {
+                            "system": "http://snomed.info/sct",
+                            "code": "394720003",
+                            "display": "Asthma medication review"
+                        }
+                    ]
+                }
+            }
         }
     ]
 }

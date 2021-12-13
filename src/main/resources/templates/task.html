@@ -1,0 +1,48 @@
+
+<div>
+    <div th:if="${#lists.isEmpty(tasks)}">
+        <p>None Recorded</p>
+    </div>
+    <div th:if="${not #lists.isEmpty(tasks )}">
+        <div>
+            <table>
+                <thead>
+                <tr>
+                    <th>Authored</th>
+                    <th>Owner</th>
+                    <th>Action</th>
+                    <th>Status</th>
+                    <th>Notes</th>
+                </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="task : ${tasks}">
+                        <td>
+                            <div th:if="${task.hasAuthoredOn()}" th:remove="tag">
+                                <span th:text="${#dates.format(task.getAuthoredOn(),'dd MMM YYYY')}" th:remove="tag">Unknown</span>
+                            </div>
+                         </td>
+                        <td>
+                            <div th:if="${task.hasOwner()}" th:remove="tag">
+                            [[${util.getDisplay(task.getOwner())}]]
+                            </div>
+                        </td>
+                        <td>
+                            <div th:if="${task.hasReason()}" th:remove="tag">
+                                <span th:text="${task.getReason().getCodingFirstRep().getDisplay()}" th:remove="tag">No reason given</span>
+                            </div>
+                        </td>
+                        <td>
+                            [[${task.getStatus()}]]
+                        </td>
+                        <td>
+                            <div th:if="${task.hasNote()}" th:remove="tag">
+                                <span th:text="${task.getNoteFirstRep().getText()}" th:remove="tag">No reason given</span>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

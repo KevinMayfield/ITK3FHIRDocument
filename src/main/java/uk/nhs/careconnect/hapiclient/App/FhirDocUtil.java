@@ -21,6 +21,8 @@ public class FhirDocUtil {
 
     private XhtmlParser xhtmlParser = new XhtmlParser();
 
+    private Bundle bundle = new Bundle();
+
     private static final Logger log = LoggerFactory.getLogger(FhirDocUtil.class);
 
     FhirDocUtil(TemplateEngine templateEngine) {
@@ -279,6 +281,36 @@ public class FhirDocUtil {
         return section;
     }
 
+    public Composition.SectionComponent getPlansActionsSection(Bundle bundle) {
+        this.bundle = bundle;
+        Composition.SectionComponent section = new Composition.SectionComponent();
+
+        ArrayList<Task> tasks = new ArrayList<>();
+
+        section.getCode().addCoding()
+                .setSystem(SNOMEDCT)
+                .setCode("887201000000105")
+                .setDisplay("Plan and requested actions");
+        section.setTitle("Plan and requested actions");
+
+        for (Bundle.BundleEntryComponent entry : bundle.getEntry()) {
+            if (entry.getResource() instanceof Task) {
+                Task task = (Task) entry.getResource();
+
+                section.getEntry().add(new Reference("urn:uuid:"+task.getId()));
+                tasks.add(task);
+            }
+        }
+        ctxThymeleaf.clearVariables();
+
+        ctxThymeleaf.setVariable("tasks", tasks);
+        ctxThymeleaf.setVariable("util", this);
+
+        section.getText().setDiv(getDiv("task")).setStatus(Narrative.NarrativeStatus.GENERATED);
+
+        return section;
+    }
+
     public Composition.SectionComponent getProvenaceSection(Composition composition,Bundle bundle) {
         Composition.SectionComponent section = new Composition.SectionComponent();
 
@@ -359,6 +391,21 @@ public class FhirDocUtil {
         return xhtmlNode;
     }
 
-
+    public String getDisplay(Reference reference) {
+        if (reference.hasDisplay()) return reference.getDisplay();
+        if (reference.hasReference()) {
+            for (Bundle.BundleEntryComponent entry : bundle.getEntry()) {
+                if (reference.getReference().equals(entry.getFullUrl())) {
+                    if (entry.getResource() instanceof Organization) {
+                        return ((Organization) entry.getResource()).getName();
+                    }
+                    if (entry.getResource() instanceof Practitioner) {
+                        return ((Practitioner) entry.getResource()).getNameFirstRep().getNameAsSingleString();
+                    }
+                }
+            }
+        }
+        return "";
+    }
 
 }
