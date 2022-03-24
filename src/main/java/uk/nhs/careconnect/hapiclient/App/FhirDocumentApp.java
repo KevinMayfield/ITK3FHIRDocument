@@ -77,7 +77,7 @@ public class FhirDocumentApp implements CommandLineRunner {
 
         Files.write(Paths.get(df.format(date)+"+encounter-"+consultationId+"-document.xml"),xmlResult.getBytes());
         performTransform(xmlResult,df.format(date)+"+"+consultationId+".html","XML/DocumentToHTML.xslt");
-
+        saveToFHIRBinary(df.format(date)+"+"+consultationId+".html", df.format(date)+"+"+consultationId+".json");
         saveToPDF(df.format(date)+"+"+consultationId+".html", df.format(date)+"+"+consultationId+".pdf");
     }
 
@@ -195,9 +195,10 @@ public class FhirDocumentApp implements CommandLineRunner {
         section = fhirDoc.getMedicationStatementSection(fhirBundleUtil.getFhirDocument());
         if (section.getEntry().size()>0) composition.addSection(section);
 
+        /* temp disable 24/3/2022
         section = fhirDoc.getMedicationRequestSection(fhirBundleUtil.getFhirDocument());
         if (section.getEntry().size()>0) composition.addSection(section);
-
+*/
         section = fhirDoc.getAllergySection(fhirBundleUtil.getFhirDocument());
         if (section.getEntry().size()>0) composition.addSection(section);
 
@@ -228,7 +229,35 @@ public class FhirDocumentApp implements CommandLineRunner {
     }
 
 
+    private void saveToFHIRBinary(String inputFile, String outputFileName) {
+        FileOutputStream os = null;
+        File file = new File(inputFile);
 
+        try {
+            String processedHtml = org.apache.commons.io.IOUtils.toString(new InputStreamReader(new FileInputStream(file), "UTF-8"));
+            final File outputFile = new File(outputFileName);
+
+            os = new FileOutputStream(outputFile);
+
+            org.hl7.fhir.r4.model.Binary binary = new org.hl7.fhir.r4.model.Binary();
+            binary.setContentType("text/html");
+            binary.setData(processedHtml.getBytes(StandardCharsets.UTF_8));
+            FhirContext ctx = FhirContext.forR4();
+            os.write(ctx.newJsonParser().encodeResourceToString(binary).getBytes(StandardCharsets.UTF_8));
+
+        }
+        catch(Exception ex) {
+            System.out.println("ERROR - "+ex.getMessage());
+        }
+        finally {
+
+            if (os != null) {
+                try {
+                    os.close();
+                } catch (IOException e) { /*ignore*/ }
+            }
+        }
+    }
 
 
     private String saveToPDF(String inputFile, String outputFileName) {
@@ -292,6 +321,7 @@ public class FhirDocumentApp implements CommandLineRunner {
             StreamSource xmlSource = new StreamSource(xml);
             StreamResult result = new StreamResult(os);
             transformer.transform(xmlSource, result);
+
         } catch (Exception ex) {
             ex.printStackTrace();
         }
